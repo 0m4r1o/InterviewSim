@@ -1,0 +1,4 @@
+ibm_watsonx_ai==0.0.5
+langchain_community==0.3.29
+pyttsx3==2.99
+SpeechRecognition==3.8.1

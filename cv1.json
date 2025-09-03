@@ -1,0 +1,157 @@
+{
+    "Name": "Omar Dasser",
+    "Profile": "My main area of expertise is mostly everything related to Artificial Intelligence and data science and AWS data engineering but also plain development with Python and NodeJS, I also acquired a new set of skills mostly in Remote sensing, geospatial data processing. I am also familiar with KPIs and business terminologies used in the agricultural and pharmaceutical (drug discovery especially) industries.",
+    "Education": [
+        {
+            "Degree": "Bachelor's degree",
+            "Institution": "FST Settat, MA"
+        },
+        {
+            "Degree": "Master's degree",
+            "Institution": "FST Settat, MA"
+        },
+        {
+            "Degree": "PhD candidate",
+            "Institution": "FST Settat, MA"
+        }
+    ],
+    "Languages": [
+        {
+            "Language": "English",
+            "Level": "Fluent"
+        },
+        {
+            "Language": "French",
+            "Level": "Fluent"
+        },
+        {
+            "Language": "Arabic",
+            "Level": "Fluent"
+        },
+        {
+            "Language": "German",
+            "Level": "Basic"
+        },
+        {
+            "Language": "Danish",
+            "Level": "Basic"
+        }
+    ],
+    "Key Skills": [
+        "Python programming",
+        "Artificial intelligence",
+        "Data analysis",
+        "AWS(Lambda,State machine, DynamoDB,Redshift,S3,Cloud Formation)",
+        "Data profiling",
+        "Flask",
+        "Remote Sensing",
+        "Machine learning",
+        "Deep Neural Network",
+        "NeuroEvolution of augmenting topologies",
+        "Genetic algorithms",
+        "Data science",
+        "Notebook scripts",
+        "NodeJS",
+        "ExpressJS",
+        "Loopback"
+    ],
+    "Key Courses and Training": [
+        "More than 100 IBM badges & certifications in various domains but mostly in Artificial Intelligence and Data science.",
+        "https://www.youracclaim.com/users/omar-dasser/badges"
+    ],
+    "Digital Credentials": [],
+    "Work Experience": [
+        {
+            "Position": "Data engineer",
+            "Company": "IBM Morocco, Morocco",
+            "Duration": "Dec 2019 - Present",
+            "Description": ""
+        }
+    ],
+    "Assignment History": [
+        {
+            "Project Name": "t\u00eate sev\u00e8re for drug document generation",
+            "Role": "Data scientist",
+            "Client": "cr\u00e9dit du maroc",
+            "Duration": "Feb 2024 - May 2024",
+            "Description": "Utilized GENAI along with Azure Functions to develop innovative APIs that generate detailed documents on pharmaceutical drugs. Leveraging Azure\u2019s cloud capabilities and artificial intelligence especiall generaive AI."
+        },
+        {
+            "Project Name": "SDAIA",
+            "Role": "Artificial Intelligence Engineer",
+            "Client": "SDAIA, Saudi Arabia",
+            "Duration": "Sep 2022 - Jan 2023",
+            "Description": "Created a predictive model for Methanol Prices, listed in different markets (China, India, M.E), in the most accurate manner."
+        },
+        {
+            "Project Name": "Florida powers & light",
+            "Role": "Tech lead AWS data engineer and python developer",
+            "Client": "Florida powers & light",
+            "Duration": "Oct 2021 - Dec 2023",
+            "Description": "Creating python server side scripts on aws (lambda & step functions) as well as different Kafka topics and connectors in order to aggregate, transform and process raw data."
+        },
+        {
+            "Project Name": "Yara International",
+            "Role": "Data engineer/ Data scientist",
+            "Client": "Yara International, Norway",
+            "Duration": "Mar 2021 - Oct 2021",
+            "Description": "Establishing data dictionaries for multiple data sources, Creating data profiling reports for multiple data sources, Benchmarking various data sources regarding geospatial and agricultural data, Creating various pipelines for data ingestion and data transformation, Creating and populating data warehouse models."
+        },
+        {
+            "Project Name": "Department of Health Abu Dhabi",
+            "Role": "Backend developer",
+            "Client": "Department of Health Abu Dhabi, United Arab Emirates",
+            "Duration": "Dec 2020 - May 2021",
+            "Description": "Maintaining and updating backend side of a mobile app with node.js"
+        },
+        {
+            "Project Name": "NHIC",
+            "Role": "Data Scientist",
+            "Client": "NHIC, Saudi Arabia",
+            "Duration": "Dec 2020 - Feb 2021",
+            "Description": "Elaborating data collection and modelling strategies and building predictive models for patient readmission and Length of stay prediction."
+        },
+        {
+            "Project Name": "Canada National Railways",
+            "Role": "Machine Learning developer",
+            "Client": "Canada National Railways, Canada",
+            "Duration": "Oct 2020 - Nov 2020",
+            "Description": "Project name: CN Edge AI Vision - Elaborating Modeling and labelling strategies, Creating scripts for image data pre-processing ( croping , histogram equalization, augmentation), Creating object detection models to detect defective materiels on trains using Faster R-CNN with PyTorch."
+        },
+        {
+            "Project Name": "Yara International",
+            "Role": "Data Scientist / Software engineer",
+            "Client": "Yara International, Norway",
+            "Duration": "Aug 2020 - Oct 2020",
+            "Description": "Project name: GHG Pilot - Elaborating Data-profiling reports, Creating various scripts for data collection from various sources, Creating scripts to parse and pre-process raw data, Creating scripts for advanced Geo-spatial data processing, Creating Geo-spatial data visualization scripts"
+        },
+        {
+            "Project Name": "TEAL / OCP",
+            "Role": "Data Scientist / Back-end Developer [Node.js/python]",
+            "Client": "TEAL / OCP, Morocco",
+            "Duration": "Dec 2019 - Jul 2020",
+            "Description": "Project name: Local Agri Market - Creating NodeJS scripts that uses remote sensing data via APIs in order to extract agricultural insights such as maps, and time series charts, Creating a LandCover and Land use model with an accuracy of 90% using data collected from the agricultural engineers team, Integrating and evaluating Nitrogen content model, Integrating and evaluating Crop Yield prediction model"
+        },
+        {
+            "Project Name": "IBM Digital-Nation Africa Advocate",
+            "Role": "Intern",
+            "Client": "IBM Morocco, Morocco",
+            "Duration": "Sep 2019 - Dec 2019",
+            "Description": "Animating various workshops on emerging technologies, presenting the IBM Digital-Nation Africa in Moroccan universities, creating various PoCs on IBM Cloud and showcasing them"
+        },
+        {
+            "Project Name": "Loan request Digitization",
+            "Role": "Intern",
+            "Client": "IBM A&T, Morocco",
+            "Duration": "Feb 2019 - Aug 2019",
+            "Description": "Creating and designing a digitized app and business process for a digital bank using IBM solutions such as : IBM BPM, IBM ODM, Filenet, Datacap under a DevOps approach"
+        },
+        {
+            "Project Name": "Web Reporting",
+            "Role": "Intern",
+            "Client": "M2M Group, Morocco",
+            "Duration": "Mar 2017 - Jun 2017",
+            "Description": "Creating a J2EE based web-application for generating and automating reports and dashboards"
+        }
+    ]
+}
