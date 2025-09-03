@@ -1,0 +1,24 @@
+{
+    "overall_score": 3,
+    "summary": {
+        "strengths": [],
+        "weaknesses": [
+            "Lack of answer to the interview question"
+        ],
+        "recommendations": [
+            "Provide a detailed example of a project utilizing AWS services for an AI application"
+        ]
+    },
+    "per_question": [
+        {
+            "id": 1,
+            "question": "Can you walk me through a specific project where you utilized AWS Lambda, State machine, DynamoDB, Redshift, S3, and Cloud Formation for an artificial intelligence application?",
+            "answer": "",
+            "score": 3,
+            "evidence": [
+                "No answer provided"
+            ],
+            "comment": "The candidate did not provide an answer to the interview question, which indicates a lack of experience or preparation in utilizing AWS services for AI applications."
+        }
+    ]
+}
