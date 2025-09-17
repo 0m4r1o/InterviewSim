@@ -14,17 +14,30 @@ import json
 import os
 from typing import Any, Dict, Optional, Union
 from datetime import datetime
+ProgramDefinition = """
+Created on Thu May 2 2025 16:10:00 
 
+@author: OmarDasser
+
+This script conducts AI-assisted mock interviews using a candidate's CV
+and a job offer description. It generates tailored interview questions,
+records and transcribes spoken responses, and evaluates the answers against
+the job requirements. The program integrates language models for question
+generation and scoring, text-to-speech for asking questions aloud, and 
+speech recognition for capturing responses. Final evaluations, including
+scores, strengths, weaknesses, and recommendations, are saved as structured 
+JSON reports for later review.
+""".strip()
 
 # ----------------------------
 # LLM setup
 # ----------------------------
-def create_llm(model: str = "gpt-3.5-turbo", temperature: float = 0.2) -> ChatOpenAI:
+def create_llm(model: str = "gpt-4o-mini", temperature: float = 0.2) -> ChatOpenAI:
     """
     Keep your key in the environment:
       setx OPENAI_API_KEY "..."
     """
-    api_key = os.environ.get("OPENAI_API_KEY","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")
+    api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
         raise RuntimeError("OPENAI_API_KEY is not set in environment variables.")
     return ChatOpenAI(
@@ -38,40 +51,152 @@ def create_llm(model: str = "gpt-3.5-turbo", temperature: float = 0.2) -> ChatOp
 # ----------------------------
 # TTS / ASR helpers (optional)
 # ----------------------------
+from openai import OpenAI
+import os, tempfile, uuid, sys
+from pathlib import Path
+
+
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY","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"))
+
+from pathlib import Path
+import tempfile, uuid, time, os
+import pygame
+
+
 def speak(text: str) -> None:
+    path = f"audios/tts_{uuid.uuid4().hex}.mp3"
     try:
-        engine = pyttsx3.init()
-        engine.setProperty('rate', 160)
-        engine.setProperty('volume', 1)
-        engine.say(text)
-        engine.runAndWait()
+        # synthesize to a unique temp MP3 file
+        with client.audio.speech.with_streaming_response.create(
+            model="gpt-4o-mini-tts",
+            voice="alloy",
+            input=text
+        ) as resp:
+            resp.stream_to_file(str(path))
+
+        # play it with pygame
+        pygame.mixer.init()                    # init audio
+        pygame.mixer.music.load(str(path))     # load mp3
+        pygame.mixer.music.play()              # play (non-blocking)
+        while pygame.mixer.music.get_busy():   # block until it finishes
+            time.sleep(0.1)
     except Exception as e:
         print("TTS error:", e)
+    finally:
+        try:
+            if path.exists():
+                path.unlink()
+        except Exception:
+            pass
 
 
-def listen() -> Optional[str]:
-    try:
-        recognizer = sr.Recognizer()
-        mic = sr.Microphone()
-    except Exception as e:
-        print("Microphone init error:", e)
-        return None
 
-    print("🎤 Say something...")
-    with mic as source:
-        recognizer.adjust_for_ambient_noise(source)
-        audio = recognizer.listen(source)
 
-    try:
-        text = recognizer.recognize_google(audio)
-        print("You said:", text)
-        return text
-    except sr.UnknownValueError:
-        print("❌ Could not understand audio")
-        return None
-    except sr.RequestError:
-        print("⚠️ Speech Recognition API unavailable")
-        return None
+
+import tempfile
+import sounddevice as sd
+import wave, tempfile
+from typing import Optional
+import os
+
+
+import numpy as np
+import sounddevice as sd
+import wave, tempfile
+
+def listen(threshold=350, silence_secs=5, max_secs=30):
+    """
+    Record audio until user stops talking (silence detection).
+    - threshold: amplitude threshold to consider as silence
+    - silence_secs: how long silence must last before stopping
+    - max_secs: safety cutoff
+    """
+    samplerate = 16000
+    blocksize = int(0.5 * samplerate)  # 0.5 second blocks
+    channels = 1
+
+    print("🎤 Speak now (auto-stop on silence)...")
+
+    recording = []
+    silence_count = 0
+    max_blocks = int(max_secs * samplerate / blocksize)
+
+    with sd.InputStream(samplerate=samplerate, channels=channels, dtype="int16") as stream:
+        for _ in range(max_blocks):
+            block, _ = stream.read(blocksize)
+            recording.append(block)
+
+            # check loudness
+            volume = np.abs(block).mean()
+            if volume < threshold:
+                silence_count += 1
+            else:
+                silence_count = 0
+
+            if silence_count * 0.5 >= silence_secs:
+                break
+
+    audio = np.concatenate(recording, axis=0)
+
+    # save temp wav
+    tmp_path = tempfile.mktemp(suffix=".wav")
+    with wave.open(tmp_path, "wb") as wf:
+        wf.setnchannels(channels)
+        wf.setsampwidth(2)
+        wf.setframerate(samplerate)
+        wf.writeframes(audio.tobytes())
+
+    # send to transcription
+    with open(tmp_path, "rb") as f:
+        tr = client.audio.transcriptions.create(
+            model="gpt-4o-mini-transcribe",
+            file=f
+        )
+    print(f"🎤 Response: {tr.text}")
+    return tr.text
+
+import random
+import re
+
+def humanize_question(text: str) -> str:
+    # Common fillers/disfluencies
+    fillers = ["hmm", "euuh", "like", "you know", "let’s see","I mean", "ah", "uh", "so", "well"]
+    
+    # Split by commas so we can inject around pauses
+    parts = re.split(r'([,;])', text)
+    new_parts = []
+    
+    for i, part in enumerate(parts):
+        part = part.strip()
+        if not part:
+            continue
+        
+        # 30% chance to prepend a filler before a segment
+        if random.random() < 0.3:
+            filler = random.choice(fillers)
+            part = f"{filler}, {part}"
+        
+        # 20% chance to append a filler at the end of a segment
+        if random.random() < 0.2:
+            filler = random.choice(fillers)
+            part = f"{part}, {filler}"
+        
+        new_parts.append(part)
+    
+    # Sometimes add one at the very beginning
+    if random.random() < 0.4:
+        new_parts[0] = random.choice(fillers) + ", " + new_parts[0]
+    
+    # Sometimes add one at the very end
+    if random.random() < 0.4:
+        new_parts[-1] = new_parts[-1] + ", " + random.choice(fillers)
+    
+    return " ".join(new_parts)
+
+
+
+
+
 
 
 # ----------------------------
@@ -106,7 +231,7 @@ def _extract_first_json_blob(text: str) -> Optional[str]:
 def GetQuestions(cv: Dict[str, Any],
                  job_offer_raw: Union[Dict[str, Any], str],
                  num_questions: int = 12,
-                 model: str = "gpt-3.5-turbo") -> Dict[str, Any]:
+                 model: str = "gpt-4o-mini") -> Dict[str, Any]:
     """
     Generate structured interview questions tailored to the given CV and job offer.
     - cv: dict from cv1.json (expects "Name" or similar)
@@ -144,7 +269,7 @@ You are a senior hiring manager and expert interviewer. You will receive two ite
 1) CANDIDATE_CV: the candidate's CV in JSON form.
 2) JOB_OFFER: a free-text job description.
 
-Your task: generate exactly {num_questions} interview questions tightly tailored to BOTH the candidate and the job offer.
+Your task: generate exactly {num_questions} interview questions tightly tailored to BOTH the candidate and the job offer. can you generate some filler words in the question to sound human here's an example (hmm, euuh, like, you know, let’s see,I mean, ah, uh, so, well ) add some others id you'd like when you see it to be adequate, make sure to use it more than once
 
 CONSTRAINTS:
 - Mix: ~50% technical, ~30% behavioral, ~20% situational/case.
@@ -200,7 +325,7 @@ def EvaluateInterview(questions: list,
                       responses: list,
                       cv: Optional[Dict[str, Any]] = None,
                       job_offer: Optional[Union[Dict[str, Any], str]] = None,
-                      model: str = "gpt-3.5-turbo") -> Dict[str, Any]:
+                      model: str = "gpt-4o-mini") -> Dict[str, Any]:
     """
     Evaluate an interview given parallel lists of questions and responses.
     Optionally provide the CV and job_offer for context to calibrate the rubric.
@@ -323,6 +448,7 @@ if __name__ == "__main__":
     # Adjust paths if needed
     CV_PATH = "cv1.json"
     JOB_PATH = "JobOffer.json"
+    print(ProgramDefinition)
 
     with open(CV_PATH, "r", encoding="utf-8") as f:
         cv = json.load(f)
@@ -331,8 +457,8 @@ if __name__ == "__main__":
         job_offer_raw = json.load(f)  # expects {"Job Offer": "..."} or a string
 
     try:
-        questions_pack = GetQuestions(cv, job_offer_raw, num_questions=1, model="gpt-3.5-turbo")
-        print(json.dumps(questions_pack, ensure_ascii=False, indent=2))
+        questions_pack = GetQuestions(cv, job_offer_raw, num_questions=2, model="gpt-4o-mini")
+        # print(json.dumps(questions_pack, ensure_ascii=False, indent=2))
 
         # Optionally speak first question:
         # if questions_pack.get("questions"):
@@ -340,16 +466,22 @@ if __name__ == "__main__":
         #     speak(questions_pack["questions"][0]["question"])
         responses = []
         Qs = []
-        for questions in questions_pack["questions"]:
-            speak(questions["question"])
-            Qs.append(questions["question"])
+        for q in questions_pack["questions"]:
+            Q = q["question"]
+            Q_human = humanize_question(Q)  # <-- add fillers
+            print(f"Question : {Q_human}")
+            speak(Q_human)
+            Qs.append(Q)
             response = listen()
             responses.append(response)
+
         Result = EvaluateInterview(Qs,responses,cv,job_offer_raw)
-        print(Result)
+        # print(Result)
         Name = cv['Name']
         timestamp_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")  # safer for filenames
         with open(f"Interviews/Interview_{Name}_{timestamp_str}.json", "w") as of:
             json.dump(Result, of, indent=4)
+            print(json.dumps(str(Result),indent=4))
+
     except Exception as e:
         print("Error while generating questions:", e)
